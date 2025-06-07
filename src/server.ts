@@ -11,7 +11,6 @@ import limiter from "./lib/express-rate-limit";
 import { connectToDb } from "./lib/mongoose";
 import { ErrorHandler } from "./middlewares/error-handler";
 import { handleServerShutdown } from "./utils/server";
-import { InternalServerException } from "./utils/app-error";
 
 const app = express();
 
@@ -28,7 +27,6 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.get("/health", (req, res) => {
-  throw new InternalServerException("sercer broke");
   res.status(200).send("OK");
 });
 
