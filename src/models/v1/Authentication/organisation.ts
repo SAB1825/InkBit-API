@@ -41,7 +41,6 @@ const OrganizationSchema = new Schema<IOrganization>({
   ownerId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-    required: true
   },
   plan: {
     type: String,

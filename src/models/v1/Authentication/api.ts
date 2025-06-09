@@ -26,7 +26,6 @@ const ApiKeySchema = new Schema<IApiKey>(
       type: String,
       required: true,
       unique: true,
-      // DON'T hash this - store as plain text for comparison
     },
     type: {
       type: String,

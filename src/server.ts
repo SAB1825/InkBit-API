@@ -1,4 +1,6 @@
-import express, { Request, Response } from "express";
+
+import 'reflect-metadata';
+import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import compression from "compression";
@@ -11,6 +13,7 @@ import limiter from "./lib/express-rate-limit";
 import { connectToDb } from "./lib/mongoose";
 import { ErrorHandler } from "./middlewares/error-handler";
 import { handleServerShutdown } from "./utils/server";
+import router from "./routes/v1";
 
 const app = express();
 
@@ -26,14 +29,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-app.get("/health", (req, res) => {
-  res.status(200).send("OK");
-});
 
 (async () => {
   try {
     await connectToDb();
-    // TODO: ADD ROUTES
+    app.use("/api/v1", router);
     app.use(ErrorHandler);
     const PORT = CONFIG.PORT;
     app.listen(PORT, () => {

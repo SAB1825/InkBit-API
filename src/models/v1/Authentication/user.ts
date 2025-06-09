@@ -2,15 +2,13 @@ import bcrypt from "bcrypt";
 import { model, Schema, Types } from "mongoose";
 
 interface IUser {
-  organizationId?: Types.ObjectId;
+  orgId?: Types.ObjectId;
   username: string;
   email: string;
   password: string;
   firstName?: string;
   lastName?: string;
-  role: "super_admin" | "org_admin" | "editor" | "author" | "reader";
-  isSuperAdmin: boolean;
-  permissions: string[];
+  role: "super_admin" | "org_admin" | "org_user";
   status: "active" | "inactive" | "banned";
   bio?: string;
   avatar?: string;
@@ -18,7 +16,7 @@ interface IUser {
 
 const UserSchema = new Schema<IUser>(
   {
-    organizationId: {
+    orgId: {
       type: Schema.Types.ObjectId,
       ref: "Organization",
     },
@@ -52,14 +50,9 @@ const UserSchema = new Schema<IUser>(
     },
     role: {
       type: String,
-      enum: ["super_admin", "org_admin", "editor", "author", "reader"],
-      default: "author",
+      enum: ["super_admin", "org_admin", "org_user"],
+      default: "org_user",
     },
-    isSuperAdmin: {
-      type: Boolean,
-      default: false,
-    },
-    permissions: [String],
     status: {
       type: String,
       enum: ["active", "inactive", "banned"],

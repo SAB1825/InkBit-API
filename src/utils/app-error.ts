@@ -1,3 +1,4 @@
+import { Organization } from './../models/v1/Authentication/organisation';
 import { HTTPSTATUS, HttpStatusCodeType } from "../config/http.config";
 import { ErrorCodeEnum, ErrorCodeEnumType } from "../enum/error-code.enum";
 
@@ -46,6 +47,32 @@ export class NotFoundException extends AppError {
             message,
             HTTPSTATUS.NOT_FOUND,
             ErrorCode || ErrorCodeEnum.RESOURCE_NOT_FOUND
+        );
+    }
+}
+
+export class OrganizationAlreadyExistsException extends AppError {
+    constructor(
+        message = "Organization already exists",
+        ErrorCode?: ErrorCodeEnumType
+    ) {
+        super(
+            message,
+            HTTPSTATUS.CONFLICT,
+            ErrorCode || ErrorCodeEnum.ORGANIZATION_ALREADY_EXISTS
+        );
+    }
+}
+
+export class UserAlreadyExistsException extends AppError {
+    constructor(
+        message = "User already exists",
+        ErrorCode?: ErrorCodeEnumType
+    ) {
+        super(
+            message,
+            HTTPSTATUS.CONFLICT,
+            ErrorCode || ErrorCodeEnum.AUTH_USER_ALREADY_EXISTS
         );
     }
 }
