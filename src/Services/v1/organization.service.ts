@@ -1,7 +1,7 @@
 import logger from '@/lib/winston';
 import { ApiKey } from '@/models/v1/Authentication/api';
 import { Organization } from '@/models/v1/Authentication/organisation';
-import { OrganizationAlreadyExistsException } from '@/utils/app-error';
+import { NotFoundException, OrganizationAlreadyExistsException } from '@/utils/app-error';
 import { generateApiKey, generateAPIkeyId } from '@/utils/generate-api-key';
 import { CreateOrganizationDto } from '@/validations/dtos';
 
@@ -60,4 +60,15 @@ export const createOrganizationService = async (data : CreateOrganizationDto) =>
         organization: newOrg,
         apiKey: newApiKey
     };
+}
+
+export const getOrganizationService = async (id : string) => {
+
+    const organization = await Organization.findById(id);
+    if (!organization) {
+        logger.error("Organization not found with ID:", id);
+        throw new NotFoundException("Organization not found");
+    }
+
+    return organization;
 }

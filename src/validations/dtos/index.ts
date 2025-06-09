@@ -57,7 +57,11 @@ export class CreateOrganizationDto {
   @IsEnum(["starter", "professional", "enterprise"])
   plan?: "starter" | "professional" | "enterprise";
 }
-
+export class GetOrganizationDto {
+  @IsString()
+  @IsNotEmpty({ message: "Organization ID is required" })
+  orgId!: string;
+}
 export class createSuperAdminDto {
   @IsString()
   @IsNotEmpty()
