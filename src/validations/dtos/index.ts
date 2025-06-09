@@ -57,11 +57,7 @@ export class CreateOrganizationDto {
   @IsEnum(["starter", "professional", "enterprise"])
   plan?: "starter" | "professional" | "enterprise";
 }
-export class GetOrganizationDto {
-  @IsString()
-  @IsNotEmpty({ message: "Organization ID is required" })
-  orgId!: string;
-}
+
 export class createSuperAdminDto {
   @IsString()
   @IsNotEmpty()
@@ -115,4 +111,29 @@ export class createSuperAdminDto {
     message: "Avatar must be a valid URL",
   })
   avatar?: string;
+}
+
+export class updateOrganizationDto{ 
+  @IsString()
+  @IsOptional()
+  @MaxLength(50, {
+    message: "Organization name must be less than 50 characters",
+  })
+  @Transform(({ value }) => value?.trim())
+  orgName!: string;
+
+  @IsString()
+  @IsOptional()
+  @Matches(/^https?:\/\/.+/, {
+    message: "Must be a valid domain with http or https",
+  })
+  orgDomain!: string;
+
+  @IsString()
+  @IsOptional()
+  @Transform(({ value }) => value?.toLowerCase())
+  @Matches(/^[a-z0-9-]+$/, {
+    message: "Slug can only contain lowercase letters, numbers, and hyphens",
+  })
+  orgSlug!: string;
 }

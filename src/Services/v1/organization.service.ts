@@ -1,9 +1,11 @@
+import { Type } from 'class-transformer';
 import logger from '@/lib/winston';
 import { ApiKey } from '@/models/v1/Authentication/api';
 import { Organization } from '@/models/v1/Authentication/organisation';
 import { NotFoundException, OrganizationAlreadyExistsException } from '@/utils/app-error';
 import { generateApiKey, generateAPIkeyId } from '@/utils/generate-api-key';
 import { CreateOrganizationDto } from '@/validations/dtos';
+import { Types } from 'mongoose';
 
 
 export const createOrganizationService = async (data : CreateOrganizationDto) => {
@@ -62,7 +64,7 @@ export const createOrganizationService = async (data : CreateOrganizationDto) =>
     };
 }
 
-export const getOrganizationService = async (id : string) => {
+export const getOrganizationService = async (id : Types.ObjectId) => {
 
     const organization = await Organization.findById(id);
     if (!organization) {
@@ -73,3 +75,20 @@ export const getOrganizationService = async (id : string) => {
     return organization;
 }
 
+export const updateOrganizationService = async (data: CreateOrganizationDto, id: Types.ObjectId) => {
+    const { orgName, orgSlug, orgDomain, plan } = data;
+
+    const organization = await Organization.findById(id);
+    if (!organization) {
+        logger.error("Organization not found with ID:", id);
+        throw new NotFoundException("Organization not found");
+    }
+
+    organization.orgName = orgName || organization.orgName;
+    organization.orgSlug = orgSlug || organization.orgSlug;
+    organization.orgDomain = orgDomain || organization.orgDomain;
+
+    const updatedOrganization = await organization.save();
+
+    return updatedOrganization;
+}

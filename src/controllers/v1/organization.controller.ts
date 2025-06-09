@@ -1,7 +1,7 @@
 import { HTTPSTATUS } from "@/config/http.config";
 import { asyncHandler, asyncHandlerAndValidation } from "@/middlewares/async-handler";
-import { createOrganizationService, getOrganizationService } from "@/Services/v1/organization.service";
-import { CreateOrganizationDto, GetOrganizationDto } from "@/validations/dtos";
+import { createOrganizationService, getOrganizationService, updateOrganizationService } from "@/Services/v1/organization.service";
+import { CreateOrganizationDto, updateOrganizationDto } from "@/validations/dtos";
 import {  Request, Response } from "express";
 
 export const createOrganization = asyncHandlerAndValidation(
@@ -23,14 +23,38 @@ export const createOrganization = asyncHandlerAndValidation(
 
 export const getOrganization = asyncHandler(
   async (req: Request, res: Response) => {
-    const { id } = req.params
+    const id = req.orgId;
     
-    const organization = await getOrganizationService(id);
+    const organization = await getOrganizationService(id!);
     res.status(HTTPSTATUS.OK).json({
       success: true,
       message: "Organization retrieved successfully",
       data: {
         organization,
+      },
+    });
+  }
+);
+
+
+export const updateOrganization = asyncHandlerAndValidation(
+  updateOrganizationDto,
+  "body",
+  async (req: Request, res: Response, data) => {
+    const id = req.orgId;
+    if (!id) {
+      return res.status(HTTPSTATUS.BAD_REQUEST).json({
+        success: false,
+        message: "Organization ID is required to update the organization",
+      });
+    }
+
+    const updatedOrganization = await updateOrganizationService(data, id);
+    res.status(HTTPSTATUS.OK).json({
+      success: true,
+      message: "Organization updated successfully",
+      data: {
+        organization: updatedOrganization,
       },
     });
   }
