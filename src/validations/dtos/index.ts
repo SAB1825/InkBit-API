@@ -66,6 +66,10 @@ export class createSuperAdminDto {
   username!: string;
 
   @IsString()
+  @IsNotEmpty({ message: "Organization ID is required" })
+  orgId?: string;
+
+  @IsString()
   @IsNotEmpty()
   @Matches(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/, {
     message: "Please enter a valid email address",
@@ -99,7 +103,7 @@ export class createSuperAdminDto {
     message: "Role must be either super_admin, org_admin, or org_user",
   })
   role!: "super_admin" | "org_admin" | "org_user";
-  
+
   @IsOptional()
   @IsString()
   @MaxLength(500)

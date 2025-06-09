@@ -76,3 +76,16 @@ export class UserAlreadyExistsException extends AppError {
         );
     }
 }
+
+export class UsageExceededException extends AppError {
+    constructor(
+        message = "Usage limit exceeded",
+        ErrorCode?: ErrorCodeEnumType
+    ) {
+        super(
+            message,
+            HTTPSTATUS.FORBIDDEN,
+            ErrorCode || ErrorCodeEnum.ORGANIZATION_USER_LIMIT_EXCEEDED
+        );
+    }
+}

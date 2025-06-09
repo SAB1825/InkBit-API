@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { model, Schema, Types } from "mongoose";
 
 interface IUser {
-  orgId?: Types.ObjectId;
+  orgId: Types.ObjectId;
   username: string;
   email: string;
   password: string;
@@ -19,6 +19,7 @@ const UserSchema = new Schema<IUser>(
     orgId: {
       type: Schema.Types.ObjectId,
       ref: "Organization",
+      required : [true, "Organization ID is required"],
     },
     username: {
       type: String,
