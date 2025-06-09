@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "target": "ES6",
-    "types": ["node"],
     "lib": ["ES2020"],
     "module": "CommonJS",
     "rootDir": "src",

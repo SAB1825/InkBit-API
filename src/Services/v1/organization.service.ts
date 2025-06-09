@@ -72,3 +72,4 @@ export const getOrganizationService = async (id : string) => {
 
     return organization;
 }
+

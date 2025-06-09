@@ -70,10 +70,6 @@ export class createSuperAdminDto {
   username!: string;
 
   @IsString()
-  @IsNotEmpty({ message: "Organization ID is required" })
-  orgId?: string;
-
-  @IsString()
   @IsNotEmpty()
   @Matches(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/, {
     message: "Please enter a valid email address",

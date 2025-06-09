@@ -3,9 +3,10 @@ import { Organization } from "@/models/v1/Authentication/organisation";
 import { User } from "@/models/v1/Authentication/user";
 import { NotFoundException, UsageExceededException, UserAlreadyExistsException } from "@/utils/app-error";
 import { createSuperAdminDto } from "@/validations/dtos";
+import { Types } from "mongoose";
 
 
-export const createUserService = async (data: createSuperAdminDto) => {
+export const createUserService = async (data: createSuperAdminDto, orgId : Types.ObjectId) => {
     const existingSuperAdmin = await User.findOne({
         email: data.email
     });
@@ -15,7 +16,7 @@ export const createUserService = async (data: createSuperAdminDto) => {
         throw new UserAlreadyExistsException("User already exists with this email");
     }
     const organization = await Organization.findOne({
-        _id: data.orgId
+        _id:orgId
     })
     if(!organization){
         throw new NotFoundException("Organization not found with this ID");
@@ -30,7 +31,7 @@ export const createUserService = async (data: createSuperAdminDto) => {
         role = "org_user"
     }
     const user  = new User({
-        orgId : data.orgId,
+        orgId : orgId,
         firstName: data.firstName,
         lastName: data.lastName,
         username: data.username,
