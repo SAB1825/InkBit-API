@@ -82,12 +82,12 @@ export const getOrganizationService = async (id: Types.ObjectId) => {
 
   return organization;
 };
-
+//TODO : CHECK ROLES BEFORE UPDATING
 export const updateOrganizationService = async (
   data: CreateOrganizationDto,
   id: Types.ObjectId
 ) => {
-  const { orgName, orgSlug, orgDomain, plan } = data;
+  const { orgName, orgSlug, orgDomain } = data;
 
   const organization = await Organization.findById(id);
   if (!organization) {
@@ -106,6 +106,8 @@ export const updateOrganizationService = async (
   );
   return updatedOrganization;
 };
+//TODO : CHECK ROLES BEFORE DELETING
+
 export const deleteOrganizationService = async (id: Types.ObjectId) => {
   try {
     const org = await Organization.findByIdAndDelete(id);

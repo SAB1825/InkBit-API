@@ -9,6 +9,9 @@ import {
   ValidateNested,
   IsNumber,
   Min,
+  ValidateIf,
+  ValidationArguments,
+  Validate,
 } from "class-validator";
 import { Transform, Type } from "class-transformer";
 
@@ -95,10 +98,10 @@ export class createSuperAdminDto {
 
   @IsString()
   @IsNotEmpty()
-  @IsEnum(["super_admin", "org_admin", "org_user"], {
+  @IsEnum(["admin" , "user"], {
     message: "Role must be either super_admin, org_admin, or org_user",
   })
-  role!: "super_admin" | "org_admin" | "org_user";
+  role!: "admin" | "user";
 
   @IsOptional()
   @IsString()
@@ -113,7 +116,7 @@ export class createSuperAdminDto {
   avatar?: string;
 }
 
-export class updateOrganizationDto{ 
+export class updateOrganizationDto {
   @IsString()
   @IsOptional()
   @MaxLength(50, {
@@ -136,4 +139,35 @@ export class updateOrganizationDto{
     message: "Slug can only contain lowercase letters, numbers, and hyphens",
   })
   orgSlug!: string;
+}
+
+function IsEmailOrUsernamePresent(_: any, args: ValidationArguments) {
+  const { email, username } = args.object as any;
+  return !!email || !!username;
+}
+
+export class LoginUserDto {
+  @ValidateIf((o) => !o.username)
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/, {
+    message: "Please enter a valid email address",
+  })
+  email?: string;
+
+  @ValidateIf((o) => !o.email)
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(50)
+  @Transform(({ value }) => value?.trim())
+  username?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password!: string;
+
+  @Validate(IsEmailOrUsernamePresent, {
+    message: "Either email or username must be provided",
+  })
+  dummyFieldToTriggerValidation: boolean = true; // Needed to apply the custom validator
 }

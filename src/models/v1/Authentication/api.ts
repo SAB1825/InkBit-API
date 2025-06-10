@@ -30,7 +30,7 @@ const ApiKeySchema = new Schema<IApiKey>(
     type: {
       type: String,
       enum: ["live", "test"],
-      default: "live",
+      default: "test",
     },
     isActive: {
       type: Boolean,

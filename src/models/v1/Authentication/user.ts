@@ -8,7 +8,7 @@ interface IUser {
   password: string;
   firstName?: string;
   lastName?: string;
-  role: "super_admin" | "org_admin" | "org_user";
+  role: "admin" | "user";
   status: "active" | "inactive" | "banned";
   bio?: string;
   avatar?: string;
@@ -19,7 +19,7 @@ const UserSchema = new Schema<IUser>(
     orgId: {
       type: Schema.Types.ObjectId,
       ref: "Organization",
-      required : [true, "Organization ID is required"],
+      required: [true, "Organization ID is required"],
     },
     username: {
       type: String,
@@ -51,8 +51,8 @@ const UserSchema = new Schema<IUser>(
     },
     role: {
       type: String,
-      enum: ["super_admin", "org_admin", "org_user"],
-      default: "org_user",
+      enum: ["admin", "user"],
+      default: "user",
     },
     status: {
       type: String,
@@ -67,16 +67,18 @@ const UserSchema = new Schema<IUser>(
   }
 );
 
-UserSchema.index({ organizationId: 1, username: 1 }, { unique: true });
-UserSchema.index({ organizationId: 1, email: 1 }, { unique: true });
-UserSchema.index({ email: 1 }, { unique: true });
-UserSchema.index({ organizationId: 1, status: 1 });
+
+UserSchema.index({ orgId: 1, username: 1 }, { unique: true });
+
+UserSchema.index({ orgId: 1, email: 1 }, { unique: true });
+
+UserSchema.index({ orgId: 1, status: 1 });
 
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
   }
-  this.password = await bcrypt.hash(this.password, 12); // Use 12 rounds
+  this.password = await bcrypt.hash(this.password, 12);
   next();
 });
 
