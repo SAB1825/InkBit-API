@@ -130,22 +130,18 @@ export const getBlogByUserService = async (
   } else {
     query.status = "published";
   }
-  console.log(query.status)
-  // Set up pagination
   const page = Math.max(1, queryParams.page || 1);
   const limit = Math.min(50, queryParams.limit || 10);
   const skip = (page - 1) * limit;
 
-  // Set up sorting
   const sortOptions: { [key: string]: 1 | -1 } = {};
   if (queryParams.sortBy) {
     sortOptions[queryParams.sortBy] = queryParams.order === 'asc' ? 1 : -1;
   } else {
-    sortOptions.createdAt = -1; // Default sort by newest
+    sortOptions.createdAt = -1; 
   }
 
   try {
-    // Get total count and blogs in parallel
     const [totalBlogs, blogs] = await Promise.all([
       Blog.countDocuments({
         orgId,
@@ -163,7 +159,6 @@ export const getBlogByUserService = async (
         .populate('author', 'username avatar')
         .select('-content')
     ]);
-    console.log(blogs)
     const totalPages = Math.ceil(totalBlogs / limit);
 
     logger.info(`Retrieved ${blogs.length} blogs for user: ${userId}`);
@@ -183,3 +178,27 @@ export const getBlogByUserService = async (
     throw error;
   }
 };
+
+export const getBlogBySlugService = async (
+  orgId: Types.ObjectId,
+  slug: string,
+  userId: string
+) => {
+  const blog = await Blog.findOne({
+    orgId,
+    slug,
+  });
+  const user = await User.findById(userId);
+  if (!blog) {
+    logger.warn("Blog not found:", slug);
+    throw new NotFoundException("Blog not found");
+  }
+  if(user?.role !== "admin" || user?._id.toString() !== blog.author.toString()) {
+    if (blog.status === "draft") {
+      logger.warn("Unauthorized access to draft blog:", slug);
+      throw new UnauthorizedAccessException("You do not have permission to view this blog");
+    }
+  }
+  return blog;
+
+}
