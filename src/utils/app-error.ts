@@ -86,3 +86,9 @@ export class InvalidTokenException extends AppError {
     super(message, HTTPSTATUS.UNAUTHORIZED, errorCode || ErrorCodeEnum.AUTH_INVALID_TOKEN);
   }
 }
+
+export class ResourceAlreadyExistsException extends AppError {
+  constructor(message = "Resource already exists", errorCode?: ErrorCodeEnumType) {
+    super(message, HTTPSTATUS.CONFLICT, errorCode || ErrorCodeEnum.RESOURCE_ALREADY_EXISTS);
+  }
+}

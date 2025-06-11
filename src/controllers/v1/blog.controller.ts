@@ -1,6 +1,6 @@
 import { HTTPSTATUS } from "@/config/http.config";
-import { asyncHandlerAndValidation } from "@/middlewares/async-handler";
-import { createBlogService } from "@/Services/v1/blog.service";
+import { asyncHandler, asyncHandlerAndValidation } from "@/middlewares/async-handler";
+import { createBlogService, deleteBlogService } from "@/Services/v1/blog.service";
 import { CreateBlogDto } from "@/validations/dtos";
 import { Request, Response } from "express";
 
@@ -31,5 +31,18 @@ export const createBlogController = asyncHandlerAndValidation(
                 blog,
             },
         });
+    }
+)
+export const deleteBlogController = asyncHandler(
+    async(req : Request, res: Response) => {
+        const blogId = req.params.blogId;
+        const orgId = req.orgId;
+        const userId = req.userId;
+        await deleteBlogService(blogId, orgId!, userId!);
+        res.status(HTTPSTATUS.OK).json({
+            success: true,
+            message: "Blog deleted successfully",
+        });
+
     }
 )

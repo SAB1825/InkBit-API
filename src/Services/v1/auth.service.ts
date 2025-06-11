@@ -19,17 +19,17 @@ import {
   verifyRefreshToken,
 } from "@/lib/jwt";
 import { Token } from "@/models/v1/token";
-import { access } from "fs";
 
 export const createUserService = async (
   data: createSuperAdminDto,
   orgId: Types.ObjectId
 ) => {
-  const existingSuperAdmin = await User.findOne({
+  const existingUser = await User.findOne({
     orgId: orgId,
+    $or: [{ email: data.email }, { username: data.username }],
   });
 
-  if (existingSuperAdmin) {
+  if (existingUser) {
     logger.error("User already exists with this email:", data.email);
     throw new UserAlreadyExistsException("User already exists with this email");
   }
