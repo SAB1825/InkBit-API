@@ -1,12 +1,22 @@
-import { createUserController, loginController, refreshTokenController } from "@/controllers/v1/authentication.controller";
+import {
+  createUserController,
+  loginController,
+  logoutController,
+  refreshTokenController,
+} from "@/controllers/v1/authentication.controller";
 import { CheckApiKeyMiddleware } from "@/middlewares/api-key";
 import { AuthMiddleware } from "@/middlewares/auth";
 import { Router } from "express";
 
-
 const router = Router();
 
-router.post("/register" , CheckApiKeyMiddleware, createUserController);
+router.post("/register", CheckApiKeyMiddleware, createUserController);
 router.post("/login", CheckApiKeyMiddleware, loginController);
-router.post("/refresh-token", AuthMiddleware, refreshTokenController)
+router.post(
+  "/refresh-token",
+  CheckApiKeyMiddleware,
+  AuthMiddleware,
+  refreshTokenController
+);
+router.post("/logout", CheckApiKeyMiddleware, AuthMiddleware, logoutController);
 export const userRoutes = router;

@@ -10,7 +10,7 @@ interface IToken {
     | "api_session"
     | "refresh_token";
   expiresAt: Date;
-  isUsed: boolean;
+  isActive: boolean;
 }
 
 const TokenSchema = new Schema<IToken>(
@@ -40,9 +40,9 @@ const TokenSchema = new Schema<IToken>(
       required: true,
       index: { expireAfterSeconds: 0 },
     },
-    isUsed: {
+    isActive: {
       type: Boolean,
-      default: false,
+      default: true,
     },
   },
   {
@@ -52,5 +52,12 @@ const TokenSchema = new Schema<IToken>(
 
 TokenSchema.index({ token: 1 }, { unique: true });
 TokenSchema.index({ userId: 1, type: 1 });
+TokenSchema.pre('find', async function() {
+  const now = new Date();
+  await Token.updateMany(
+    { expiresAt: { $lt: now }, isActive: true },
+    { $set: { isActive: false } }
+  );
 
+});
 export const Token = model<IToken>("Token", TokenSchema);

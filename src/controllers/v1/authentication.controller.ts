@@ -8,6 +8,7 @@ import {
 import {
   createUserService,
   loginUserService,
+  logoutService,
   refreshTokenService,
 } from "@/Services/v1/user.service";
 import { createSuperAdminDto, LoginUserDto } from "@/validations/dtos";
@@ -45,8 +46,16 @@ export const loginController = asyncHandlerAndValidation(
       httpOnly: true,
       secure: CONFIG.NODE_ENV === "production",
       sameSite: "strict",
+      maxAge: 60 * 60 * 24 * 30 * 1000, // 30 days
+      expires: new Date(Date.now() + 60 * 60 * 24 * 30 * 1000), // 30 days
     });
-
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: CONFIG.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 60 * 60 * 1000, // 1 hour
+      expires: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
+    });
     res.status(HTTPSTATUS.OK).json({
       success: true,
       message: "User login successfully",
@@ -72,3 +81,25 @@ export const refreshTokenController = asyncHandler(
     });
   }
 );
+
+export const logoutController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const refreshToken= req.cookies.refreshToken as string;
+    console.log("REFRESH TOKEN", refreshToken);
+    await logoutService(refreshToken)
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: CONFIG.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: CONFIG.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+    res.status(HTTPSTATUS.OK).json({
+      success: true,
+      message: "User logged out successfully",
+    });
+  }
+)

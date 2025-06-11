@@ -11,11 +11,11 @@ export const AdminMiddleware = async (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.headers.authorization;
+  const token = req.cookies.accessToken
   console.log(token);
   if (!token) {
     res.status(HTTPSTATUS.NOT_FOUND).json({
-      success: true,
+      success: false,
       message: "token not found.",
     });
     return;
