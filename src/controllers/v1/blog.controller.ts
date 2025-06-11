@@ -1,6 +1,6 @@
 import { HTTPSTATUS } from "@/config/http.config";
 import { asyncHandler, asyncHandlerAndValidation } from "@/middlewares/async-handler";
-import { createBlogService, deleteBlogService } from "@/Services/v1/blog.service";
+import { createBlogService, deleteBlogService, getBlogByUserService } from "@/Services/v1/blog.service";
 import { CreateBlogDto } from "@/validations/dtos";
 import { Request, Response } from "express";
 
@@ -46,3 +46,41 @@ export const deleteBlogController = asyncHandler(
 
     }
 )
+export const getBlogByUserController = asyncHandler(
+    async(req: Request, res: Response) => {
+        const orgId = req.orgId;
+        const userId = req.params.userId;
+        const currentUserId = req.userId;
+        
+        // Extract and validate query parameters
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const sortBy = req.query.sortBy as 'createdAt' | 'viewsCount' | 'likesCount';
+        const order = req.query.order as 'asc' | 'desc';
+
+        if (!orgId || !userId || !currentUserId) {
+            return res.status(HTTPSTATUS.BAD_REQUEST).json({
+                success: false,
+                message: "Missing required parameters",
+            });
+        }
+
+        const result = await getBlogByUserService(
+            orgId,
+            userId,
+            currentUserId,
+            {
+                page,
+                limit,
+                sortBy,
+                order
+            }
+        );
+
+        res.status(HTTPSTATUS.OK).json({
+            success: true,
+            message: "Blogs retrieved successfully",
+            data: result
+        });
+    }
+);

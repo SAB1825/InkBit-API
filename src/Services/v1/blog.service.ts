@@ -11,7 +11,9 @@ import {
   UnauthorizedAccessException,
 } from "@/utils/app-error";
 import { User } from "@/models/v1/user";
-
+interface QueryType {
+  status?: 'draft' | 'published' | { $in: ('draft' | 'published')[] };
+}
 export const createBlogService = async (
   data: CreateBlogDto,
   orgId: Types.ObjectId,
@@ -89,4 +91,95 @@ export const deleteBlogService = async (
     );
   }
   logger.info("Blog deleted successfully:", blogId);
+};
+
+interface BlogQueryParams {
+  page?: number;
+  limit?: number;
+  sortBy?: 'createdAt' | 'viewsCount' | 'likesCount';
+  order?: 'asc' | 'desc';
+}
+
+export const getBlogByUserService = async (
+  orgId: Types.ObjectId, 
+  userId: string, 
+  currentUserId: string,
+  queryParams: BlogQueryParams = {}
+) => {
+  const query: QueryType = {};
+  
+  const [user, currentUser] = await Promise.all([
+    User.findById(userId),
+    User.findById(currentUserId)
+  ]);
+
+  if (!user) {
+    logger.warn("User not found:", userId);
+    throw new NotFoundException("User not found");
+  }
+
+  if (!currentUser) {
+    logger.warn("Current user not found:", currentUserId);
+    throw new NotFoundException("Current user not found");
+  }
+
+   if (currentUser._id.toString() === userId || currentUser.role === "admin") {
+    query.status = { $in: ["draft", "published"] };
+  }else if (currentUser.role === "user") {
+    query.status = "published";
+  } else {
+    query.status = "published";
+  }
+  console.log(query.status)
+  // Set up pagination
+  const page = Math.max(1, queryParams.page || 1);
+  const limit = Math.min(50, queryParams.limit || 10);
+  const skip = (page - 1) * limit;
+
+  // Set up sorting
+  const sortOptions: { [key: string]: 1 | -1 } = {};
+  if (queryParams.sortBy) {
+    sortOptions[queryParams.sortBy] = queryParams.order === 'asc' ? 1 : -1;
+  } else {
+    sortOptions.createdAt = -1; // Default sort by newest
+  }
+
+  try {
+    // Get total count and blogs in parallel
+    const [totalBlogs, blogs] = await Promise.all([
+      Blog.countDocuments({
+        orgId,
+        author: userId,
+        ...query,
+      }),
+      Blog.find({
+        orgId,
+        author: userId,
+        ...query,
+      })
+        .sort(sortOptions)
+        .skip(skip)
+        .limit(limit)
+        .populate('author', 'username avatar')
+        .select('-content')
+    ]);
+    console.log(blogs)
+    const totalPages = Math.ceil(totalBlogs / limit);
+
+    logger.info(`Retrieved ${blogs.length} blogs for user: ${userId}`);
+
+    return {
+      blogs,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalBlogs,
+        hasMore: page < totalPages,
+        limit
+      }
+    };
+  } catch (error) {
+    logger.error("Error retrieving blogs:", error);
+    throw error;
+  }
 };
