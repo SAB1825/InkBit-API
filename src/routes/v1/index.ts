@@ -1,6 +1,6 @@
 import { Router } from "express";
-import organizationRoutes from "./oraganization.route";
-import { userRoutes } from "./user.route";
+import {organizationRoutes} from "./oraganization.route";
+import { authRoutes } from "./auth.route";
 
 const router = Router();
 
@@ -15,5 +15,5 @@ router.get('/health', (req, res) => {
 
 
 router.use("/organization", organizationRoutes);
-router.use("/auth", userRoutes)
+router.use("/auth", authRoutes)
 export default router;

@@ -11,4 +11,4 @@ router.get("/", CheckApiKeyMiddleware,  getOrganization);
 router.put("/", CheckApiKeyMiddleware,AdminMiddleware, updateOrganization);
 router.delete("/", CheckApiKeyMiddleware,AdminMiddleware, deleteOrganization)
 
-export default router;
+export const organizationRoutes = router;

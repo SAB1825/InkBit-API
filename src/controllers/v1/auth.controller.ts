@@ -10,7 +10,7 @@ import {
   loginUserService,
   logoutService,
   refreshTokenService,
-} from "@/Services/v1/user.service";
+} from "@/Services/v1/auth.service";
 import { createSuperAdminDto, LoginUserDto } from "@/validations/dtos";
 import { Request, Response } from "express";
 

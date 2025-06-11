@@ -3,7 +3,7 @@ import {
   loginController,
   logoutController,
   refreshTokenController,
-} from "@/controllers/v1/authentication.controller";
+} from "@/controllers/v1/auth.controller";
 import { CheckApiKeyMiddleware } from "@/middlewares/api-key";
 import { AuthMiddleware } from "@/middlewares/auth";
 import { Router } from "express";
@@ -19,4 +19,4 @@ router.post(
   refreshTokenController
 );
 router.post("/logout", CheckApiKeyMiddleware, AuthMiddleware, logoutController);
-export const userRoutes = router;
+export const authRoutes = router;

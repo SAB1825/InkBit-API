@@ -1,7 +1,7 @@
 import { HTTPSTATUS } from "@/config/http.config";
 import logger from "@/lib/winston";
-import { ApiKey } from "@/models/v1/Authentication/api";
-import { Organization } from "@/models/v1/Authentication/organisation";
+import { ApiKey } from "@/models/v1/api";
+import { Organization } from "@/models/v1/organisation";
 import { NextFunction, Request, Response } from "express";
 
 export const CheckApiKeyMiddleware = async (

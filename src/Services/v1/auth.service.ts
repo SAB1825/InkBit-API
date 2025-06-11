@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import logger from "@/lib/winston";
-import { Organization } from "@/models/v1/Authentication/organisation";
-import { User } from "@/models/v1/Authentication/user";
+import { Organization } from "@/models/v1/organisation";
+import { User } from "@/models/v1/user";
 import {
   InternalServerException,
   InvalidPasswordException,
@@ -18,7 +18,7 @@ import {
   generateRefreshToken,
   verifyRefreshToken,
 } from "@/lib/jwt";
-import { Token } from "@/models/v1/Authentication/token";
+import { Token } from "@/models/v1/token";
 import { access } from "fs";
 
 export const createUserService = async (

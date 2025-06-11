@@ -1,7 +1,7 @@
 import { Type } from "class-transformer";
 import logger from "@/lib/winston";
-import { ApiKey } from "@/models/v1/Authentication/api";
-import { Organization } from "@/models/v1/Authentication/organisation";
+import { ApiKey } from "@/models/v1/api";
+import { Organization } from "@/models/v1/organisation";
 import {
     InternalServerException,
   NotFoundException,
@@ -10,7 +10,7 @@ import {
 import { generateApiKey, generateAPIkeyId } from "@/utils/generate-api-key";
 import { CreateOrganizationDto } from "@/validations/dtos";
 import { Types } from "mongoose";
-import { User } from "@/models/v1/Authentication/user";
+import { User } from "@/models/v1/user";
 
 export const createOrganizationService = async (
   data: CreateOrganizationDto

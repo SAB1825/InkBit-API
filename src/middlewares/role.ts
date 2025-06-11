@@ -1,7 +1,7 @@
 import { HTTPSTATUS } from "@/config/http.config";
 import { verifyAccessToken } from "@/lib/jwt";
 import logger from "@/lib/winston";
-import { User } from "@/models/v1/Authentication/user";
+import { User } from "@/models/v1/user";
 import { UnauthorizedAccessException } from "@/utils/app-error";
 import { NextFunction, Request, Response } from "express";
 import { JsonWebTokenError } from "jsonwebtoken";
