@@ -12,6 +12,9 @@ import {
   ValidateIf,
   ValidationArguments,
   Validate,
+  IsArray,
+  IsObject,
+  MinLength,
 } from "class-validator";
 import { Transform, Type } from "class-transformer";
 
@@ -98,7 +101,7 @@ export class createSuperAdminDto {
 
   @IsString()
   @IsNotEmpty()
-  @IsEnum(["admin" , "user"], {
+  @IsEnum(["admin", "user"], {
     message: "Role must be either super_admin, org_admin, or org_user",
   })
   role!: "admin" | "user";
@@ -170,4 +173,64 @@ export class LoginUserDto {
     message: "Either email or username must be provided",
   })
   dummyFieldToTriggerValidation: boolean = true; // Needed to apply the custom validator
+}
+// ...existing code...
+class BlogBannerDto {
+  @IsString()
+  @IsNotEmpty()
+  publicId!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/^https?:\/\/.+/, {
+    message: "Must be a valid URL with http or https",
+  })
+  url!: string;
+
+  @IsNumber()
+  @Min(1)
+  width!: number;
+
+  @IsNumber()
+  @Min(1)
+  height!: number;
+}
+export class CreateBlogDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(100, {
+    message: "Title must be less than 100 characters",
+  })
+  @Transform(({ value }) => value?.trim())
+  title!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(100, {
+    message: "Content must be at least 100 characters long",
+  })
+  content!: string;
+
+  @IsObject()
+  @ValidateNested()
+  @Type(() => BlogBannerDto)
+  banner!: BlogBannerDto;
+
+  @IsEnum(["draft", "published"], {
+    message: "Status must be either 'draft' or 'published'",
+  })
+  @IsOptional()
+  status?: "draft" | "published" = "draft";
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  tags?: string[];
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(200, {
+    message: "Description must be less than 200 characters",
+  })
+  description?: string;
 }
