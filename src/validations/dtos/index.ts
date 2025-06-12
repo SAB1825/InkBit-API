@@ -197,6 +197,43 @@ class BlogBannerDto {
 }
 export class CreateBlogDto {
   @IsString()
+  @MaxLength(100, {
+    message: "Title must be less than 100 characters",
+  })
+  @Transform(({ value }) => value?.trim())
+  title!: string;
+
+  @IsString()
+  @MinLength(100, {
+    message: "Content must be at least 100 characters long",
+  })
+  content!: string;
+
+  @IsObject()
+  @ValidateNested()
+  @Type(() => BlogBannerDto)
+  banner!: BlogBannerDto;
+
+  @IsEnum(["draft", "published"], {
+    message: "Status must be either 'draft' or 'published'",
+  })
+  @IsOptional()
+  status?: "draft" | "published" = "draft";
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  tags?: string[];
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(200, {
+    message: "Description must be less than 200 characters",
+  })
+  description?: string;
+}
+export class UpdateBlogDto {
+  @IsString()
   @IsNotEmpty()
   @MaxLength(100, {
     message: "Title must be less than 100 characters",
@@ -205,14 +242,15 @@ export class CreateBlogDto {
   title!: string;
 
   @IsString()
-  @IsNotEmpty()
   @MinLength(100, {
     message: "Content must be at least 100 characters long",
   })
+  @IsOptional()
   content!: string;
 
   @IsObject()
   @ValidateNested()
+  @IsOptional()
   @Type(() => BlogBannerDto)
   banner!: BlogBannerDto;
 
