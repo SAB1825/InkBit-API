@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "src/server.js",
   "scripts": {
-    "dev": "ts-node-dev -r tsconfig-paths/register src/server.ts",
+    "dev": "nodemon",
     "build": "tsc && tsc-alias",
 "start": "node dist/server.js",
     "start:prod": "pm2 start dist/server.js --name ink-bit-api"
