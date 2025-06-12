@@ -272,3 +272,15 @@ export class UpdateBlogDto {
   })
   description?: string;
 }
+
+
+export class createCommentDto {
+  @IsString()
+  @IsNotEmpty()
+  content!: string;
+}
+export class updateCommentDto {
+  @IsString()
+  @IsNotEmpty()
+  content!: string;
+}
