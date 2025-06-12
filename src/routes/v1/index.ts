@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {organizationRoutes} from "./oraganization.route";
+import {organizationRoutes} from "./organization.route";
 import { authRoutes } from "./auth.route";
 import { blogRoutes } from "./blog.route";
 import { commentRoutes } from "./comment.route";
