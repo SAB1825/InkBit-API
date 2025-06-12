@@ -18,18 +18,16 @@ interface CommentQueryParams {
   order?: "asc" | "desc";
 }
 
-// CREATE COMMENT
 export const createCommentService = async (
   data: createCommentDto,
   orgId: Types.ObjectId,
   userId: string,
   blogId: string
 ) => {
-  // Check if blog exists and is published
   const blog = await Blog.findOne({
     _id: blogId,
     orgId: orgId,
-    status: "published" // Only allow comments on published blogs
+    status: "published" 
   });
 
   if (!blog) {
@@ -37,18 +35,16 @@ export const createCommentService = async (
     throw new NotFoundException("Blog not found or not available for comments");
   }
 
-  // Check if user exists
   const user = await User.findById(userId);
   if (!user) {
     logger.warn("User not found:", userId);
     throw new NotFoundException("User not found");
   }
 
-  // Sanitize comment content
   const window = new JSDOM("").window;
   const purify = DOMPurify(window);
   const cleanContent = purify.sanitize(data.content, { 
-    ALLOWED_TAGS: [], // No HTML tags allowed in comments
+    ALLOWED_TAGS: [],
     ALLOWED_ATTR: [] 
   });
 
@@ -64,12 +60,10 @@ export const createCommentService = async (
 
     const savedComment = await newComment.save();
 
-    // Increment blog comments count
     await Blog.findByIdAndUpdate(blogId, {
       $inc: { commentsCount: 1 }
     });
 
-    // Populate user data for response
     const populatedComment = await Comment.findById(savedComment._id)
       .populate("userId", "username avatar")
       .populate("blogId", "title slug");
@@ -82,7 +76,6 @@ export const createCommentService = async (
   }
 };
 
-// GET COMMENTS BY BLOG
 export const getCommentsByBlogService = async (
   orgId: Types.ObjectId,
   blogId: string,
@@ -107,7 +100,7 @@ export const getCommentsByBlogService = async (
   if (queryParams.sortBy) {
     sortOptions[queryParams.sortBy] = queryParams.order === "asc" ? 1 : -1;
   } else {
-    sortOptions.createdAt = -1; // Latest first
+    sortOptions.createdAt = -1; 
   }
 
   try {
@@ -149,20 +142,17 @@ export const getCommentsByBlogService = async (
   }
 };
 
-// GET COMMENTS BY USER
 export const getCommentsByUserService = async (
   orgId: Types.ObjectId,
   targetUserId: string,
   currentUserId: string,
   queryParams: CommentQueryParams = {}
 ) => {
-  // Check if target user exists
   const user = await User.findById(targetUserId);
   if (!user) {
     logger.warn("User not found:", targetUserId);
     throw new NotFoundException("User not found");
   }
-
   const page = Math.max(1, queryParams.page || 1);
   const limit = Math.min(50, queryParams.limit || 20);
   const skip = (page - 1) * limit;
@@ -173,7 +163,6 @@ export const getCommentsByUserService = async (
   } else {
     sortOptions.createdAt = -1;
   }
-
   try {
     const [totalComments, comments] = await Promise.all([
       Comment.countDocuments({
@@ -213,8 +202,6 @@ export const getCommentsByUserService = async (
     throw error;
   }
 };
-
-// UPDATE COMMENT
 export const updateCommentService = async (
   data: updateCommentDto,
   orgId: Types.ObjectId,
@@ -312,17 +299,13 @@ export const deleteCommentService = async (
   }
 
   try {
-    // Soft delete
     await Comment.findByIdAndUpdate(commentId, {
       isDeleted: true,
       updatedAt: new Date()
     });
-
-    // Decrement blog comments count
     await Blog.findByIdAndUpdate(comment.blogId, {
       $inc: { commentsCount: -1 }
     });
-
     logger.info("Comment deleted successfully:", commentId);
     return { message: "Comment deleted successfully" };
   } catch (error) {

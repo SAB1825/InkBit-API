@@ -1,4 +1,4 @@
-import { createComment, deleteComment, getCommentsByBlog, getCommentsByUser, updateComment } from "@/controllers/comment.controller";
+import { createComment, deleteComment, getCommentsByBlog, getCommentsByUser, updateComment } from "@/controllers/v1/comment.controller";
 import { CheckApiKeyMiddleware } from "@/middlewares/api-key";
 import { AuthMiddleware } from "@/middlewares/auth";
 import { Router } from "express";

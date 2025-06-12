@@ -3,6 +3,7 @@ import {organizationRoutes} from "./oraganization.route";
 import { authRoutes } from "./auth.route";
 import { blogRoutes } from "./blog.route";
 import { commentRoutes } from "./comment.route";
+import { likeRoutes } from "./likes.route";
 
 const router = Router();
 
@@ -20,5 +21,7 @@ router.use("/organization", organizationRoutes);
 router.use("/auth", authRoutes);
 router.use("/blog", blogRoutes)
 router.use("/", commentRoutes)
+router.use("/", likeRoutes)
+
 
 export default router;
