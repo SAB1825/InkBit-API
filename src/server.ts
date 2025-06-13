@@ -16,7 +16,7 @@ import { handleServerShutdown } from "./utils/server";
 import router from "./routes/v1";
 
 const app = express();
-app.set('trust proxy', true);
+app.set('trust proxy', "172-31-4-209");
 
 app.use(cors(corsOptions));
 app.use(limiter);
