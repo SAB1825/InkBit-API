@@ -33,7 +33,7 @@ app.use(cookieParser());
 (async () => {
   try {
     await connectToDb();
-    app.use("/api/v1", router);
+    app.use("/api", router);
     app.use(ErrorHandler);
     const PORT = CONFIG.PORT;
     app.listen(PORT, () => {
