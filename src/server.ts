@@ -1,11 +1,9 @@
-
 import 'reflect-metadata';
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import compression from "compression";
 import helmet from "helmet";
-
 import { CONFIG } from "./config/env.config";
 import logger from "./lib/winston";
 import { corsOptions } from "./lib/cors";
@@ -16,7 +14,10 @@ import { handleServerShutdown } from "./utils/server";
 import router from "./routes/v1";
 
 const app = express();
-app.set('trust proxy', "172-31-4-209");
+
+// Fix: Trust localhost/loopback since Nginx is on same server
+app.set('trust proxy', 'loopback');
+// Or alternatively: app.set('trust proxy', '127.0.0.1');
 
 app.use(cors(corsOptions));
 app.use(limiter);
@@ -29,7 +30,6 @@ app.use(helmet());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
-
 
 (async () => {
   try {
